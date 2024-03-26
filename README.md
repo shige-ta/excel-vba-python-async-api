@@ -1,5 +1,3 @@
-# ollama-excel-async-api
-
 Excel VBA と Python を使って、ollama API に非同期にリクエストを行うサンプルプロジェクトです。
 
 ## 前提条件
