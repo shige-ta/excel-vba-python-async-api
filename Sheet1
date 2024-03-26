@@ -1,0 +1,32 @@
+Option Explicit
+
+Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" _
+    Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, _
+    ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, _
+    ByVal nShowCmd As Long) As Long
+
+Private Const SW_HIDE = 0
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Target.Columns.Count > 1 Or Target.Rows.Count > 1 Then Exit Sub
+    
+    If Target.Column = 1 Then ' Column A が変更された場合のみ実行
+        Dim prompt As String
+        prompt = Trim(Target.Value)
+        
+        If prompt = "" Then
+            ' 空欄の場合は何もしない
+            Exit Sub
+        End If
+        
+        ' Pythonスクリプトを非同期で実行
+        Dim pythonScript As String
+        pythonScript = ThisWorkbook.Path & "\async_request.py"
+        
+        Dim args As String
+        args = """" & prompt & """ """ & Target.Address & """ """ & Target.Offset(0, 1).Address & """"
+        
+        ShellExecute 0, "open", "python", pythonScript & " " & args, ThisWorkbook.Path, SW_HIDE
+    End If
+End Sub
+
